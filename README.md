@@ -10,8 +10,8 @@ Clicking on the screen will pull up the controls.
 I may update this game, but I probably won't.
 
 Programs used:
-Thonny
-GIMP (GNU Image Manipulation Program)
+Thonny,
+GIMP (GNU Image Manipulation Program),
 Pygame
 
 Feel free to do whatever you want with this code, just make sure to credit me.
