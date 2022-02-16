@@ -1,0 +1,22 @@
+Urbobz:
+0
+Button Amount:
+1
+Button Price:
+100
+Workers:
+0
+Shops:
+0
+Factories:
+0
+Monopolies:
+0
+Nations:
+0
+Planets:
+0
+Galaxies:
+0
+Golden:
+0
