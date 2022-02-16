@@ -20,8 +20,6 @@ logo_img = pygame.image.load(os.path.join(sys.path[0], "assets/logo.png"), "r")
 logo_img = pygame.transform.scale(logo_img, (300, 150))
 
 
-increase_amount = 1
-urbobz = 0
 ups = 0
 
 
@@ -45,7 +43,8 @@ class big_button:
             screen.blit(button_up_img, (362, 200))
         else:
             screen.blit(button_down_img, (362, 200))
-        
+
+
 big_button = big_button()
 worker_ups = 1
 shop_ups = 8
@@ -54,9 +53,7 @@ monopoly_ups = 100
 nation_ups = 500
 planet_ups = 2500
 galaxy_ups = 10000
-total_ups= 0
-button_price = 100
-        
+total_ups = 0        
 frames = 0
 
 
@@ -65,7 +62,7 @@ class worker():
         global worker_ups
         global frames
         global urbobz
-        if frames == 0:
+        if frames % 60 == 0:
             urbobz += worker_ups
             
 class shop():
@@ -73,7 +70,7 @@ class shop():
         global shop_ups
         global frames
         global urbobz
-        if frames == 0:
+        if frames % 60 == 0:
             urbobz += shop_ups
             
 class factory():
@@ -81,7 +78,7 @@ class factory():
         global factory_ups
         global frames
         global urbobz
-        if frames == 0:
+        if frames % 60 == 0:
             urbobz += factory_ups
             
 class monopoly():
@@ -89,7 +86,7 @@ class monopoly():
         global monopoly_ups
         global frames
         global urbobz
-        if frames == 0:
+        if frames % 60 == 0:
             urbobz += monopoly_ups
             
 class nation():
@@ -97,7 +94,7 @@ class nation():
         global nation_ups
         global frames
         global urbobz
-        if frames == 0:
+        if frames % 60 == 0:
             urbobz += nation_ups
             
 class planet():
@@ -105,7 +102,7 @@ class planet():
         global planet_ups
         global frames
         global urbobz
-        if frames == 0:
+        if frames % 60 == 0:
             urbobz += planet_ups
             
 class galaxy():
@@ -113,7 +110,7 @@ class galaxy():
         global galaxy_ups
         global frames
         global urbobz
-        if frames == 0:
+        if frames % 60 == 0:
             urbobz += galaxy_ups
             
             
@@ -141,6 +138,51 @@ show_galaxies = False
 show_golden = False
 golden_upgrade = False
 show_tutorial = False
+force_save = False
+save_timer = 0
+
+save_data = os.getcwd() + "/save_data.txt"
+save_file = open(save_data, "r")
+lines = save_file.readlines()
+urbobz = int(lines[1])
+increase_amount = int(lines[3])
+button_price = int(lines[5])
+
+for x in range(int(lines[7])):
+    worker_list.append(worker())
+    worker_price *= 1.15
+    worker_price = math.ceil(worker_price)
+for x in range(int(lines[9])):
+    shop_list.append(shop())
+    shop_price *= 1.15
+    shop_price = math.ceil(shop_price)
+for x in range(int(lines[11])):
+    factory_list.append(factory())
+    factory_price *= 1.15
+    factory_price = math.ceil(factory_price)
+for x in range(int(lines[13])):
+    monopoly_list.append(monopoly())
+    monopoly_price *= 1.15
+    monopoly_price = math.ceil(monopoly_price)
+for x in range(int(lines[15])):
+    nation_list.append(nation())
+    nation_price *= 1.15
+    nation_price = math.ceil(nation_price)
+for x in range(int(lines[17])):
+    planet_list.append(planet())
+    planet_price *= 1.15
+    planet_price = math.ceil(planet_price)
+for x in range(int(lines[19])):
+    galaxy_list.append(galaxy())
+    galaxy_price *= 1.15
+    galaxy_price = math.ceil(galaxy_price)
+    
+if int(lines[21]) == 1:
+    golden_upgrade = True
+    button_up_img = pygame.image.load(os.path.join(sys.path[0], "assets/golden_button_up.png"), "r")
+    button_up_img = pygame.transform.scale(button_up_img, (300, 150))
+    button_down_img = pygame.image.load(os.path.join(sys.path[0], "assets/golden_button_down.png"), "r")
+    button_down_img = pygame.transform.scale(button_down_img, (300, 150))
 
 while True:
     
@@ -210,6 +252,10 @@ while True:
                     increase_amount *= 2
                     urbobz -= button_price
                     button_price *= 3
+                    
+            if event.key == pygame.K_s:
+                if pressed_keys[pygame.K_LCTRL]:
+                    force_save = True
                     
         if event.type == pygame.MOUSEBUTTONDOWN:
             if show_tutorial:
@@ -320,6 +366,7 @@ while True:
     tutorial2_text = text_font.render("Use 1-9 to buy upgrades", False, (0, 0, 0))
     tutorial3_text = text_font.render("Use ENTER to upgrade your button", False, (0, 0, 0))
     tutorial4_text = text_font.render("Click anywhere to close this window", False, (0, 0, 0))
+    saving_text = text_font.render("Saving game...", False, (0, 0, 0))
     
     
     screen.blit(urbobz_text, (0, 0))
@@ -363,8 +410,34 @@ while True:
     
     
     frames += 1
-    if frames == 60:
-        frames = 0
+        
+    if frames % 3600 == 0 or force_save:
+        save_file = open(save_data, "w")
+        save_file.write("Urbobz:\n" + str(urbobz))
+        save_file.write("\nButton Amount:\n" + str(increase_amount))
+        save_file.write("\nButton Price:\n" + str(button_price))
+        save_file.write("\nWorkers:\n" + str(len(worker_list)))
+        save_file.write("\nShops:\n" + str(len(shop_list)))
+        save_file.write("\nFactories:\n" + str(len(factory_list)))
+        save_file.write("\nMonopolies:\n" + str(len(monopoly_list)))
+        save_file.write("\nNations:\n" + str(len(nation_list)))
+        save_file.write("\nPlanets:\n" + str(len(planet_list)))
+        save_file.write("\nGalaxies:\n" + str(len(galaxy_list)))
+        save_file.write("\nGolden:\n")
+        if golden_upgrade:
+            save_file.write(str(1))
+        else:
+            save_file.write(str(0))
+            
+        save_file.close()
+            
+        save_timer = 60
+        force_save = False
+        
+    if save_timer > 0:
+        screen.blit(saving_text, (400, 145))
+        save_timer -= 1
     
     pygame.display.flip()
     time.sleep(0.016)
+
